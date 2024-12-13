@@ -1,0 +1,2 @@
+# cashlog
+🐍 Cash flow tracker
