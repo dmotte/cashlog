@@ -5,4 +5,4 @@
 
 :snake: **Cash** flow **tracker**.
 
-TODO fill this repo with content
+TODO write the README
