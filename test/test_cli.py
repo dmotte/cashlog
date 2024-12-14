@@ -73,7 +73,27 @@ def test_load_data():
     assert exc_info.value.args == (
         'Content must start with either "sep=" or "datetime"',)
 
-    # TODO more test cases
+    csv = textwrap.dedent('''\
+        datetime,amount,desc
+        2020-01-01 00:00:00+00:00,123,
+    ''')
+
+    with pytest.raises(ValueError) as exc_info:
+        load_data(io.StringIO(csv))
+    assert exc_info.value.args == ('Amount 123 does not start with - or +',)
+
+    csv = textwrap.dedent('''\
+        datetime,amount,desc
+        2020-01-01 00:00:00+00:00,+10,
+        2020-01-05 00:00:00+00:00,+20,
+        2020-01-03 00:00:00+00:00,+30,
+    ''')
+
+    with pytest.raises(ValueError) as exc_info:
+        load_data(io.StringIO(csv))
+    assert exc_info.value.args == (
+        'Invalid entry order: 2020-01-05 00:00:00+00:00 > '
+        '2020-01-03 00:00:00+00:00',)
 
 
 def test_save_data():
