@@ -19,20 +19,20 @@ def is_aware(d: dt):
     return d.tzinfo is not None and d.tzinfo.utcoffset(d) is not None
 
 
-def load_data(file: TextIO, delimiter: str = '') -> list[dict]:
+def load_data(file: TextIO) -> tuple[list[dict], str]:
     '''
-    Loads data from a CSV file. If delimiter is empty string, it will be
-    automatically detected based on the file content
+    Loads data from a CSV file. It automatically detects the delimiter based on
+    the file content
     '''
-    if delimiter == '':
-        first_line = file.readline()[:-1]
+    preview = file.readline(9)
 
-        if len(first_line) == 5 and first_line.startswith('sep='):
-            delimiter = first_line[4]
-        else:
-            file.seek(0)
-            delimiter = next((d for d in [';', '|', '\t']
-                              if d in first_line), ',')
+    if preview.startswith('sep='):
+        delimiter = preview[4]
+    elif preview.startswith('datetime'):
+        delimiter = preview[8]
+        file.seek(0)
+    else:
+        raise ValueError('Content must start with either "sep=" or "datetime"')
 
     data = list(csv.DictReader(file, delimiter=delimiter))
 
@@ -43,8 +43,8 @@ def load_data(file: TextIO, delimiter: str = '') -> list[dict]:
             entry['datetime'] = entry['datetime'].astimezone()
 
         if not entry['amount'].startswith(('-', '+')):
-            raise ValueError(f'Amount {entry['amount']} does not start with + '
-                             'or -')
+            raise ValueError(f'Amount {entry['amount']} does not start with - '
+                             'or +')
 
         entry['amount'] = float(entry['amount'])
 
@@ -52,19 +52,17 @@ def load_data(file: TextIO, delimiter: str = '') -> list[dict]:
         prev, curr = data[i - 1], data[i]
 
         if prev['datetime'] > curr['datetime']:
-            raise ValueError('Invalid entry order: ' +
-                             str(prev['datetime']) + ' > ' +
-                             str(curr['datetime']))
+            raise ValueError(f'Invalid entry order: {prev['datetime']} > ' +
+                             f'{curr['datetime']}')
 
-    return data
+    return data, delimiter
 
 
-def save_data(data: list[dict], file: TextIO, fmt_currency: str = ''):
+def save_data(data: list[dict], file: TextIO, delimiter: str = ',',
+              fmt_currency: str = ''):
     '''
     Saves data into a CSV file
     '''
-    # TODO add support for delimiter here too, because desc may contain
-    # commas. Or use csv.DictWriter
     func_currency = str if fmt_currency == '' \
         else lambda x: fmt_currency.format(x)
 
@@ -75,9 +73,9 @@ def save_data(data: list[dict], file: TextIO, fmt_currency: str = ''):
         'desc': str,
     }
 
-    print(','.join(fields.keys()), file=file)
+    print(delimiter.join(fields.keys()), file=file)
     for x in data:
-        print(','.join(f(x[k]) for k, f in fields.items()), file=file)
+        print(delimiter.join(f(x[k]) for k, f in fields.items()), file=file)
 
 
 def compute_totals(data: list[dict]):
@@ -127,14 +125,8 @@ def main(argv=None):
         file_out = (sys.stdout if args.file_out == '-'
                     else stack.enter_context(open(args.file_out, 'w')))
 
-        # TODO maybe detection by extension not needed, because the header
-        # (first line of the CSV file) is always the same
-        DELIM_BY_EXT = {'csv': '', 'psv': '|', 'tsv': '\t'}
-        extension = args.file_in.split('.')[-1]
-        delimiter = DELIM_BY_EXT.get(extension.lower(), '')
-
-        data_in = load_data(file_in, delimiter)
+        data_in, delimiter = load_data(file_in, delimiter)
         data_out = compute_totals(data_in)
-        save_data(data_out, file_out, args.fmt_currency)
+        save_data(data_out, file_out, delimiter, args.fmt_currency)
 
     return 0

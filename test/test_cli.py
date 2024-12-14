@@ -34,9 +34,10 @@ def test_load_data():
         2020-01-05 00:00:00+00:00,-0,Negative zero
     ''')
 
-    data = load_data(io.StringIO(csv))
+    data, delimiter = load_data(io.StringIO(csv))
 
     assert data == data_out_expected
+    assert delimiter == ','
 
     csv = textwrap.dedent('''\
         datetime|amount|desc
@@ -47,9 +48,10 @@ def test_load_data():
         2020-01-05 00:00:00+00:00|-0|Negative zero
     ''')
 
-    data = load_data(io.StringIO(csv))
+    data, delimiter = load_data(io.StringIO(csv))
 
     assert data == data_out_expected
+    assert delimiter == '|'
 
     csv = textwrap.dedent('''\
         sep=/
@@ -61,26 +63,15 @@ def test_load_data():
         2020-01-05 00:00:00+00:00/-0/Negative zero
     ''')
 
-    data = load_data(io.StringIO(csv))
+    data, delimiter = load_data(io.StringIO(csv))
 
     assert data == data_out_expected
+    assert delimiter == '/'
 
-    csv = textwrap.dedent('''\
-        datetime=amount=desc
-        2020-01-01 00:00:00+00:00=+5=First gift
-        2020-01-03 00:00:00+00:00=+7.500=Second gift
-        2020-01-05 00:00:00+00:00=-3.1=First expense
-        2020-01-05 00:00:00+00:00=+0=Zero
-        2020-01-05 00:00:00+00:00=-0=Negative zero
-    ''')
-
-    data = load_data(io.StringIO(csv), delimiter='=')
-
-    assert data == data_out_expected
-
-    with pytest.raises(KeyError) as exc_info:
-        load_data(io.StringIO(csv))
-    assert exc_info.value.args == ('datetime',)
+    with pytest.raises(ValueError) as exc_info:
+        load_data(io.StringIO('This is invalid content'))
+    assert exc_info.value.args == (
+        'Content must start with either "sep=" or "datetime"',)
 
     # TODO more test cases
 
