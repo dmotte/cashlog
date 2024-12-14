@@ -135,12 +135,25 @@ def test_save_data():
     ''')
 
     buf = io.StringIO()
-    save_data(data, buf, delimiter='|')
+    save_data(data, buf, '|')
     buf.seek(0)
 
     assert buf.read() == csv
 
-    # TODO more tests
+    csv = textwrap.dedent('''\
+        datetime;amount;total;desc
+        2020-01-01 00:00:00+00:00;+5.00;5.00;First gift
+        2020-01-03 00:00:00+00:00;+7.50;12.50;Second gift
+        2020-01-05 00:00:00+00:00;-3.10;9.40;First expense
+        2020-01-05 00:00:00+00:00;+0.00;9.40;First zero
+        2020-01-05 00:00:00+00:00;+0.00;9.40;Second zero
+    ''')
+
+    buf = io.StringIO()
+    save_data(data, buf, ';', '{:+.2f}', '{:.2f}')
+    buf.seek(0)
+
+    assert buf.read() == csv
 
 
 def test_compute_totals():
