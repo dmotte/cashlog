@@ -12,18 +12,7 @@ from cashlog import load_data, save_data, compute_totals
 
 
 def test_load_data():
-    csv = textwrap.dedent('''\
-        datetime,amount,desc
-        2020-01-01 00:00:00+00:00,+5,First gift
-        2020-01-03 00:00:00+00:00,+7.500,Second gift
-        2020-01-05 00:00:00+00:00,-3.1,First expense
-        2020-01-05 00:00:00+00:00,+0,Zero
-        2020-01-05 00:00:00+00:00,-0,Negative zero
-    ''')
-
-    data = load_data(io.StringIO(csv))
-
-    assert data == [
+    data_out_expected = [
         {'datetime': dt(2020, 1, 1, tzinfo=tz.utc),
          'amount': 5, 'desc': 'First gift'},
         {'datetime': dt(2020, 1, 3, tzinfo=tz.utc),
@@ -36,10 +25,64 @@ def test_load_data():
          'amount': 0, 'desc': 'Negative zero'},
     ]
 
-    # with pytest.raises(ValueError) as exc_info: # TODO
-    #     load_data(io.StringIO(csv))
-    # assert exc_info.value.args == (
-    #     'TODO',)
+    csv = textwrap.dedent('''\
+        datetime,amount,desc
+        2020-01-01 00:00:00+00:00,+5,First gift
+        2020-01-03 00:00:00+00:00,+7.500,Second gift
+        2020-01-05 00:00:00+00:00,-3.1,First expense
+        2020-01-05 00:00:00+00:00,+0,Zero
+        2020-01-05 00:00:00+00:00,-0,Negative zero
+    ''')
+
+    data = load_data(io.StringIO(csv))
+
+    assert data == data_out_expected
+
+    csv = textwrap.dedent('''\
+        datetime|amount|desc
+        2020-01-01 00:00:00+00:00|+5|First gift
+        2020-01-03 00:00:00+00:00|+7.500|Second gift
+        2020-01-05 00:00:00+00:00|-3.1|First expense
+        2020-01-05 00:00:00+00:00|+0|Zero
+        2020-01-05 00:00:00+00:00|-0|Negative zero
+    ''')
+
+    data = load_data(io.StringIO(csv))
+
+    assert data == data_out_expected
+
+    csv = textwrap.dedent('''\
+        sep=/
+        datetime/amount/desc
+        2020-01-01 00:00:00+00:00/+5/First gift
+        2020-01-03 00:00:00+00:00/+7.500/Second gift
+        2020-01-05 00:00:00+00:00/-3.1/First expense
+        2020-01-05 00:00:00+00:00/+0/Zero
+        2020-01-05 00:00:00+00:00/-0/Negative zero
+    ''')
+
+    data = load_data(io.StringIO(csv))
+
+    assert data == data_out_expected
+
+    csv = textwrap.dedent('''\
+        datetime=amount=desc
+        2020-01-01 00:00:00+00:00=+5=First gift
+        2020-01-03 00:00:00+00:00=+7.500=Second gift
+        2020-01-05 00:00:00+00:00=-3.1=First expense
+        2020-01-05 00:00:00+00:00=+0=Zero
+        2020-01-05 00:00:00+00:00=-0=Negative zero
+    ''')
+
+    data = load_data(io.StringIO(csv), delimiter='=')
+
+    assert data == data_out_expected
+
+    with pytest.raises(KeyError) as exc_info:
+        load_data(io.StringIO(csv))
+    assert exc_info.value.args == ('datetime',)
+
+    # TODO more test cases
 
 
 def test_save_data():
