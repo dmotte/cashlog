@@ -98,23 +98,49 @@ def test_load_data():
 
 def test_save_data():
     data = [
-        # TODO
+        {'datetime': dt(2020, 1, 1, tzinfo=tz.utc),
+         'amount': 5, 'total': 5, 'desc': 'First gift'},
+        {'datetime': dt(2020, 1, 3, tzinfo=tz.utc),
+         'amount': 7.5, 'total': 12.5, 'desc': 'Second gift'},
+        {'datetime': dt(2020, 1, 5, tzinfo=tz.utc),
+         'amount': -3.1, 'total': 9.4, 'desc': 'First expense'},
+        {'datetime': dt(2020, 1, 5, tzinfo=tz.utc),
+         'amount': 0, 'total': 9.4, 'desc': 'First zero'},
+        {'datetime': dt(2020, 1, 5, tzinfo=tz.utc),
+         'amount': 0, 'total': 9.4, 'desc': 'Second zero'},
     ]
 
     csv = textwrap.dedent('''\
         datetime,amount,total,desc
-        2020-01-01 00:00:00+00:00,+5,First gift
-        2020-01-03 00:00:00+00:00,+7.500,Second gift
-        2020-01-05 00:00:00+00:00,-3.1,First expense
-        2020-01-05 00:00:00+00:00,+0,Zero
-        2020-01-05 00:00:00+00:00,-0,Negative zero
+        2020-01-01 00:00:00+00:00,5,5,First gift
+        2020-01-03 00:00:00+00:00,7.5,12.5,Second gift
+        2020-01-05 00:00:00+00:00,-3.1,9.4,First expense
+        2020-01-05 00:00:00+00:00,0,9.4,First zero
+        2020-01-05 00:00:00+00:00,0,9.4,Second zero
     ''')
 
     buf = io.StringIO()
     save_data(data, buf)
     buf.seek(0)
 
-    # assert buf.read() == csv # TODO
+    assert buf.read() == csv
+
+    csv = textwrap.dedent('''\
+        datetime|amount|total|desc
+        2020-01-01 00:00:00+00:00|5|5|First gift
+        2020-01-03 00:00:00+00:00|7.5|12.5|Second gift
+        2020-01-05 00:00:00+00:00|-3.1|9.4|First expense
+        2020-01-05 00:00:00+00:00|0|9.4|First zero
+        2020-01-05 00:00:00+00:00|0|9.4|Second zero
+    ''')
+
+    buf = io.StringIO()
+    save_data(data, buf, delimiter='|')
+    buf.seek(0)
+
+    assert buf.read() == csv
+
+    # TODO more tests
 
 
 def test_compute_totals():
