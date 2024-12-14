@@ -42,6 +42,12 @@ And finally display some nice **plots** using the [`plots.py`](example/plots.py)
 venv/bin/python3 plots.py -at output.csv
 ```
 
+**Tip**: if you want to somehow **filter the data** before generating the plots, you can use the `awk` command:
+
+```bash
+awk -F, 'NR==1 || ($2+0 >= 5 || $2+0 <= -5)' output.csv > output-filtered.csv
+```
+
 For more details on how to use this command, you can also refer to its help message (`--help`).
 
 ## Development
