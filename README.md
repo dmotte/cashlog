@@ -33,7 +33,7 @@ Now we need some **input data**. You can take a look at the tests in [`test_cli.
 Then we can **compute the totals**:
 
 ```bash
-python3 -mcashlog --fmt-amount='{:+.2f}' --fmt-total='{:.2f}' input.csv output.csv # TODO test
+python3 -mcashlog --fmt-amount='{:+.2f}' --fmt-total='{:.2f}' input.csv output.csv
 ```
 
 And finally display some nice **plots** using the [`plots.py`](example/plots.py) script (which uses the [_Plotly_](https://github.com/plotly/plotly.py) Python library):
