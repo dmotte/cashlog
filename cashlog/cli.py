@@ -59,17 +59,17 @@ def load_data(file: TextIO) -> tuple[list[dict], str]:
 
 
 def save_data(data: list[dict], file: TextIO, delimiter: str = ',',
-              fmt_currency: str = ''):
+              fmt_amount: str = '', fmt_total: str = ''):
     '''
     Saves data into a CSV file
     '''
-    func_currency = str if fmt_currency == '' \
-        else lambda x: fmt_currency.format(x)
+    func_amount = str if fmt_amount == '' else lambda x: fmt_amount.format(x)
+    func_total = str if fmt_total == '' else lambda x: fmt_total.format(x)
 
     fields = {
         'datetime': str,
-        'amount': func_currency,  # TODO split into fmt_amount and fmt_total
-        'total': func_currency,
+        'amount': func_amount,
+        'total': func_total,
         'desc': str,
     }
 
@@ -111,9 +111,12 @@ def main(argv=None):
                         help='Output file. If set to "-" then stdout is used '
                         '(default: -)')
 
-    parser.add_argument('--fmt-currency', type=str, default='',
-                        help='If specified, formats the currency values with '
+    parser.add_argument('--fmt-amount', type=str, default='',
+                        help='If specified, formats the amount values with '
                         'this format string (e.g. "{:+.2f}")')
+    parser.add_argument('--fmt-total', type=str, default='',
+                        help='If specified, formats the total values with '
+                        'this format string (e.g. "{:.2f}")')
 
     args = parser.parse_args(argv[1:])
 
@@ -127,6 +130,7 @@ def main(argv=None):
 
         data_in, delimiter = load_data(file_in, delimiter)
         data_out = compute_totals(data_in)
-        save_data(data_out, file_out, delimiter, args.fmt_currency)
+        save_data(data_out, file_out, delimiter,
+                  args.fmt_amount, args.fmt_total)
 
     return 0
