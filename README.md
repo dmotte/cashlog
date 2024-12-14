@@ -39,7 +39,7 @@ python3 -mcashlog --fmt-amount='{:+.2f}' --fmt-total='{:.2f}' input.csv output.c
 And finally display some nice **plots** using the [`plots.py`](example/plots.py) script (which uses the [_Plotly_](https://github.com/plotly/plotly.py) Python library):
 
 ```bash
-venv/bin/python3 plots.py TODO output.csv
+venv/bin/python3 plots.py -at output.csv
 ```
 
 For more details on how to use this command, you can also refer to its help message (`--help`).
