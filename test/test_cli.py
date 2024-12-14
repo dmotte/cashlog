@@ -158,15 +158,29 @@ def test_save_data():
 
 def test_compute_totals():
     data_in_orig = [
-        # TODO
+        {'datetime': dt(2020, 1, 1, tzinfo=tz.utc),
+         'amount': 5, 'desc': 'First gift'},
+        {'datetime': dt(2020, 1, 3, tzinfo=tz.utc),
+         'amount': 7.5, 'desc': 'Second gift'},
+        {'datetime': dt(2020, 1, 5, tzinfo=tz.utc),
+         'amount': -3.1, 'desc': 'First expense'},
+        {'datetime': dt(2020, 1, 5, tzinfo=tz.utc),
+         'amount': 0, 'desc': 'First zero'},
     ]
 
     data_out_expected = [
-        # TODO
+        {'datetime': dt(2020, 1, 1, tzinfo=tz.utc),
+         'amount': 5, 'total': 5, 'desc': 'First gift'},
+        {'datetime': dt(2020, 1, 3, tzinfo=tz.utc),
+         'amount': 7.5, 'total': 12.5, 'desc': 'Second gift'},
+        {'datetime': dt(2020, 1, 5, tzinfo=tz.utc),
+         'amount': -3.1, 'total': 9.4, 'desc': 'First expense'},
+        {'datetime': dt(2020, 1, 5, tzinfo=tz.utc),
+         'amount': 0, 'total': 9.4, 'desc': 'First zero'},
     ]
 
     data_in = [x.copy() for x in data_in_orig]
     data_in_copy = [x.copy() for x in data_in]
     data_out = list(compute_totals(data_in))
-    # assert data_in == data_in_copy # TODO
-    # assert data_out == data_out_expected # TODO
+    assert data_in == data_in_copy
+    assert data_out == data_out_expected
