@@ -128,7 +128,7 @@ def main(argv=None):
         file_out = (sys.stdout if args.file_out == '-'
                     else stack.enter_context(open(args.file_out, 'w')))
 
-        data_in, delimiter = load_data(file_in, delimiter)
+        data_in, delimiter = load_data(file_in)
         data_out = compute_totals(data_in)
         save_data(data_out, file_out, delimiter,
                   args.fmt_amount, args.fmt_total)
