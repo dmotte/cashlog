@@ -30,6 +30,12 @@ venv/bin/python3 -mpip install -r requirements.txt
 
 Now we need some **input data**. You can take a look at the tests in [`test_cli.py`](test/test_cli.py) to understand the file format and create your own CSV input file.
 
+> **Tip**: you can **join multiple input files** that are in the same format with the following command:
+>
+> ```bash
+> cat input-*.csv | (read -r header; echo "$header"; while read -r i; do [ "$i" = "$header" ] || echo "$i"; done)
+> ```
+
 Then we can **compute the totals**:
 
 ```bash
@@ -42,11 +48,11 @@ And finally display some nice **plots** using the [`plots.py`](example/plots.py)
 venv/bin/python3 plots.py -at output.csv
 ```
 
-**Tip**: if you want to somehow **filter the data** before generating the plots, you can use the `awk` command:
-
-```bash
-awk -F, 'NR==1 || ($2+0 >= 5 || $2+0 <= -5)' output.csv > output-filtered.csv
-```
+> **Tip**: if you want to somehow **filter the data** before generating the plots, you can use the `awk` command:
+>
+> ```bash
+> awk -F, 'NR==1 || ($2+0 >= 5 || $2+0 <= -5)' output.csv > output-filtered.csv
+> ```
 
 For more details on how to use this command, you can also refer to its help message (`--help`).
 
