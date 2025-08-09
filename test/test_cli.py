@@ -11,7 +11,7 @@ from datetime import timezone as tz
 from cashlog import load_data, save_data, compute_totals
 
 
-def test_load_data():
+def test_load_data() -> None:
     data_out_expected = [
         {'datetime': dt(2020, 1, 1, tzinfo=tz.utc),
          'amount': 5, 'desc': 'First gift'},
@@ -96,7 +96,7 @@ def test_load_data():
         '2020-01-03 00:00:00+00:00',)
 
 
-def test_save_data():
+def test_save_data() -> None:
     data = [
         {'datetime': dt(2020, 1, 1, tzinfo=tz.utc),
          'amount': 5, 'total': 5, 'desc': 'First gift'},
@@ -156,7 +156,7 @@ def test_save_data():
     assert buf.read() == csv
 
 
-def test_compute_totals():
+def test_compute_totals() -> None:
     data_in_orig = [
         {'datetime': dt(2020, 1, 1, tzinfo=tz.utc),
          'amount': 5, 'desc': 'First gift'},

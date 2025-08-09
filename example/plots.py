@@ -34,7 +34,7 @@ def load_data(file: TextIO) -> tuple[list[dict], str]:
     return data, delimiter
 
 
-def main(argv=None):
+def main(argv: list[str] = None) -> int:
     if argv is None:
         argv = sys.argv
 

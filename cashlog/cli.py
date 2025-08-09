@@ -4,14 +4,15 @@ import argparse
 import csv
 import sys
 
+from collections.abc import Iterator
 from contextlib import ExitStack
 from datetime import datetime as dt
-from typing import TextIO
+from typing import Any, TextIO
 
 from dateutil import parser as dup
 
 
-def is_aware(d: dt):
+def is_aware(d: dt) -> bool:
     '''
     Returns true if the datetime object `d` is timezone-aware, false otherwise.
     See https://docs.python.org/3/library/datetime.html#determining-if-an-object-is-aware-or-naive
@@ -59,7 +60,7 @@ def load_data(file: TextIO) -> tuple[list[dict], str]:
 
 
 def save_data(data: list[dict], file: TextIO, delimiter: str = ',',
-              fmt_amount: str = '', fmt_total: str = ''):
+              fmt_amount: str = '', fmt_total: str = '') -> None:
     '''
     Saves data into a CSV file
     '''
@@ -78,7 +79,7 @@ def save_data(data: list[dict], file: TextIO, delimiter: str = ',',
         print(delimiter.join(f(x[k]) for k, f in fields.items()), file=file)
 
 
-def compute_totals(data: list[dict]):
+def compute_totals(data: list[dict]) -> Iterator[dict[str, Any]]:
     '''
     Computes totals
     '''
@@ -94,7 +95,7 @@ def compute_totals(data: list[dict]):
         }
 
 
-def main(argv=None):
+def main(argv: list[str] = None) -> int:
     if argv is None:
         argv = sys.argv
 
