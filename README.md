@@ -33,7 +33,7 @@ Now we need some **input data**. You can take a look at the tests in [`test_cli.
 > **Tip**: you can **join multiple input files** that are in the same format with the following command:
 >
 > ```bash
-> cat input-*.csv | (read -r header; echo "$header"; while read -r i; do [ "$i" = "$header" ] || echo "$i"; done)
+> cat input-*.csv | (IFS= read -r header; echo "$header"; while IFS= read -r i; do [ "$i" = "$header" ] || echo "$i"; done)
 > ```
 
 Then we can **compute the totals**:
