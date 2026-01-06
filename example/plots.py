@@ -66,7 +66,7 @@ def main(argv: list[str] | None = None) -> int:
             data,
             y='amount',
             template='plotly_dark',
-            title='Amount values',
+            title=f'Amount values: {args.file_in}',
 
             color_discrete_sequence=['#fd0'],
             hover_name='datetime',
@@ -80,7 +80,7 @@ def main(argv: list[str] | None = None) -> int:
             x='datetime',
             y='total',
             template='plotly_dark',
-            title='Total values',
+            title=f'Total values: {args.file_in}',
 
             line_shape='hv',
             hover_name='datetime',
