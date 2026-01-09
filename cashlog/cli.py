@@ -12,6 +12,7 @@ from typing import Any, TextIO
 from dateutil import parser as dup
 
 
+# Src: https://github.com/dmotte/misc/tree/main/snippets
 def is_aware(d: dt) -> bool:
     '''
     Returns true if the datetime object `d` is timezone-aware, false otherwise.
