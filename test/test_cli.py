@@ -10,62 +10,64 @@ from datetime import timezone as tz
 
 from cashlog import load_data, save_data, compute_totals
 
+from util import pfmt
+
 
 def test_load_data() -> None:
     data_out_expected = [
-        {'datetime': dt(2020, 1, 1, tzinfo=tz.utc),
-         'amount': 5, 'desc': 'First gift'},
-        {'datetime': dt(2020, 1, 3, tzinfo=tz.utc),
+        {'datetime': dt(2020, 1, 1).astimezone(),
+         'amount': 5.0, 'desc': 'First gift'},
+        {'datetime': dt(2020, 1, 3).astimezone(),
          'amount': 7.5, 'desc': 'Second gift'},
-        {'datetime': dt(2020, 1, 5, tzinfo=tz.utc),
+        {'datetime': dt(2020, 1, 5).astimezone(),
          'amount': -3.1, 'desc': 'First expense'},
-        {'datetime': dt(2020, 1, 5, tzinfo=tz.utc),
-         'amount': 0, 'desc': 'Zero'},
-        {'datetime': dt(2020, 1, 5, tzinfo=tz.utc),
-         'amount': 0, 'desc': 'Negative zero'},
+        {'datetime': dt(2020, 1, 5).astimezone(),
+         'amount': 0.0, 'desc': 'Zero'},
+        {'datetime': dt(2020, 1, 5).astimezone(),
+         'amount': -0.0, 'desc': 'Negative zero'},
     ]
 
     csv = textwrap.dedent('''\
         datetime,amount,desc
-        2020-01-01 00:00:00+00:00,+5,First gift
-        2020-01-03 00:00:00+00:00,+7.500,Second gift
-        2020-01-05 00:00:00+00:00,-3.1,First expense
-        2020-01-05 00:00:00+00:00,+0,Zero
-        2020-01-05 00:00:00+00:00,-0,Negative zero
+        2020-01-01 00:00:00,+5,First gift
+        2020-01-03 00:00:00,+7.500,Second gift
+        2020-01-05 00:00:00,-3.1,First expense
+        2020-01-05 00:00:00,+0,Zero
+        2020-01-05 00:00:00,-0,Negative zero
     ''')
 
     data, delimiter = load_data(io.StringIO(csv))
 
-    assert data == data_out_expected
+    assert pfmt(data) == pfmt(data_out_expected)
     assert delimiter == ','
 
     csv = textwrap.dedent('''\
         datetime|amount|desc
-        2020-01-01 00:00:00+00:00|+5|First gift
-        2020-01-03 00:00:00+00:00|+7.500|Second gift
-        2020-01-05 00:00:00+00:00|-3.1|First expense
-        2020-01-05 00:00:00+00:00|+0|Zero
-        2020-01-05 00:00:00+00:00|-0|Negative zero
+        2020-01-01 00:00:00|+5|First gift
+        2020-01-03 00:00:00|+7.500|Second gift
+        2020-01-05 00:00:00|-3.1|First expense
+        2020-01-05 00:00:00|+0|Zero
+        2020-01-05 00:00:00|-0|Negative zero
     ''')
 
     data, delimiter = load_data(io.StringIO(csv))
 
-    assert data == data_out_expected
+    assert pfmt(data) == pfmt(data_out_expected)
     assert delimiter == '|'
 
     csv = textwrap.dedent('''\
         sep=/
         datetime/amount/desc
-        2020-01-01 00:00:00+00:00/+5/First gift
-        2020-01-03 00:00:00+00:00/+7.500/Second gift
-        2020-01-05 00:00:00+00:00/-3.1/First expense
-        2020-01-05 00:00:00+00:00/+0/Zero
-        2020-01-05 00:00:00+00:00/-0/Negative zero
+        2020-01-01 00:00:00/+5/First gift
+        2020-01-03 00:00:00/+7.500/Second gift
+        2020-01-05 00:00:00/-3.1/First expense
+        2020-01-05 00:00:00/+0/Zero
+        2020-01-05 00:00:00/-0/Negative zero
     ''')
 
     data, delimiter = load_data(io.StringIO(csv))
 
-    assert data == data_out_expected
+    assert pfmt(data) == pfmt(data_out_expected)
     assert delimiter == '/'
 
     with pytest.raises(ValueError) as exc_info:
@@ -182,5 +184,5 @@ def test_compute_totals() -> None:
     data_in = [x.copy() for x in data_in_orig]
     data_in_copy = [x.copy() for x in data_in]
     data_out = list(compute_totals(data_in))
-    assert data_in == data_in_copy
-    assert data_out == data_out_expected
+    assert pfmt(data_in) == pfmt(data_in_copy)
+    assert pfmt(data_out) == pfmt(data_out_expected)
