@@ -183,6 +183,6 @@ def test_compute_totals() -> None:
 
     data_in = [x.copy() for x in data_in_orig]
     data_in_copy = [x.copy() for x in data_in]
-    data_out = list(compute_totals(data_in))
+    data_out_actual = list(compute_totals(data_in))
     assert pfmt(data_in) == pfmt(data_in_copy)
-    assert pfmt(data_out) == pfmt(data_out_expected)
+    assert pfmt(data_out_actual) == pfmt(data_out_expected)
