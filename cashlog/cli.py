@@ -21,6 +21,14 @@ def is_aware(d: dt) -> bool:
     return d.tzinfo is not None and d.tzinfo.utcoffset(d) is not None
 
 
+# Src: https://github.com/dmotte/misc/tree/main/snippets
+def normlz_num(x: int | float) -> int | float:
+    '''
+    Normalize number type by converting whole-number floats to int
+    '''
+    return int(x) if isinstance(x, float) and x.is_integer() else x
+
+
 def load_data(file: TextIO) -> tuple[list[dict], str]:
     '''
     Loads data from a CSV file. It automatically detects the delimiter based on
@@ -77,7 +85,8 @@ def save_data(data: list[dict], file: TextIO, delimiter: str = ',',
 
     print(delimiter.join(fields.keys()), file=file)
     for x in data:
-        print(delimiter.join(f(x[k]) for k, f in fields.items()), file=file)
+        print(delimiter.join(f(normlz_num(x[k])) for k, f in fields.items()),
+              file=file)
 
 
 def compute_totals(data: list[dict]) -> Iterator[dict[str, Any]]:

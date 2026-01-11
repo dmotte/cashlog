@@ -127,6 +127,25 @@ def test_save_data() -> None:
 
     assert buf.read() == csv
 
+    data = [  # Test with numeric values as float
+        {'datetime': dt(2020, 1, 1, tzinfo=tz.utc),
+         'amount': 5.0, 'total': 5.0, 'desc': 'First gift'},
+        {'datetime': dt(2020, 1, 3, tzinfo=tz.utc),
+         'amount': 7.5, 'total': 12.5, 'desc': 'Second gift'},
+        {'datetime': dt(2020, 1, 5, tzinfo=tz.utc),
+         'amount': -3.1, 'total': 9.4, 'desc': 'First expense'},
+        {'datetime': dt(2020, 1, 5, tzinfo=tz.utc),
+         'amount': 0.0, 'total': 9.4, 'desc': 'First zero'},
+        {'datetime': dt(2020, 1, 5, tzinfo=tz.utc),
+         'amount': 0.0, 'total': 9.4, 'desc': 'Second zero'},
+    ]
+
+    buf = io.StringIO()
+    save_data(data, buf)
+    buf.seek(0)
+
+    assert buf.read() == csv
+
     csv = textwrap.dedent('''\
         datetime|amount|total|desc
         2020-01-01 00:00:00+00:00|5|5|First gift
