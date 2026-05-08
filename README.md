@@ -24,8 +24,8 @@ cd example/
 We need a Python **virtual environment** ("venv") with some packages to do the demonstration:
 
 ```bash
-python3 -mvenv venv
-venv/bin/python3 -mpip install -r requirements.txt
+python3 -mvenv .venv
+.venv/bin/python3 -mpip install -r requirements.txt
 ```
 
 Now we need some **input data**. You can take a look at the tests in [`test_cli.py`](test/test_cli.py) to understand the file format and create your own CSV input file.
@@ -45,7 +45,7 @@ python3 -mcashlog --fmt-amount='{:+.2f}' --fmt-total='{:.2f}' input.csv output.c
 And finally display some nice **plots** using the [`plots.py`](example/plots.py) script (which uses the [_Plotly_](https://github.com/plotly/plotly.py) Python library):
 
 ```bash
-venv/bin/python3 plots.py -at output.csv
+.venv/bin/python3 plots.py -at output.csv
 ```
 
 > **Tip**: if you want to somehow **filter the data** before generating the plots, you can use the `awk` command:
@@ -61,8 +61,8 @@ For more details on how to use this command, you can also refer to its help mess
 If you want to contribute to this project, you can create a Python **virtual environment** ("venv") with the package in **editable** mode:
 
 ```bash
-python3 -mvenv venv
-venv/bin/python3 -mpip install -e .
+python3 -mvenv .venv
+.venv/bin/python3 -mpip install -e .
 ```
 
 This will link the package to the original location, so any changes to the code will reflect directly in your environment ([source](https://stackoverflow.com/a/35064498)).
@@ -70,6 +70,6 @@ This will link the package to the original location, so any changes to the code 
 If you want to run the tests:
 
 ```bash
-venv/bin/python3 -mpip install pytest
-venv/bin/python3 -mpytest test
+.venv/bin/python3 -mpip install pytest
+.venv/bin/python3 -mpytest test
 ```
